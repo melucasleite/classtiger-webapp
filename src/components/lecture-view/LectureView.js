@@ -9,13 +9,25 @@ import FilterDialog from "./FilterDialog";
 import sampleLectures from "./sampleLectures";
 import AppBar from "@material-ui/core/AppBar";
 import PrimarySearchAppBar from "./PrimarySearchAppBar";
+import classtigerAPI from "../../services/api";
+import moment from "moment";
 
 class LectureView extends React.Component {
   state = {
-    lectures: sampleLectures,
-    openDialog: "filter",
+    lectures: [],
+    openDialog: "",
     filters: []
   };
+
+  async componentDidMount() {
+    const res = await classtigerAPI.get("/lectures");
+    const lectures = res.data.lectures;
+    lectures.map(lecture => {
+      lecture.start = moment(lecture.start);
+      lecture.end = moment(lecture.end);
+    });
+    this.setState({ lectures });
+  }
 
   openDialog = dialog => {
     this.setState({ openDialog: dialog });

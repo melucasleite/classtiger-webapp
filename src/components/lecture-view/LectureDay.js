@@ -22,7 +22,7 @@ function LectureDay(props) {
       </Box>
       <Grid container spacing={1}>
         {props.lectures.map(lecture => (
-          <Lecture key={lecture.id} lecture={lecture} />
+          <Lecture key={lecture._id} lecture={lecture} />
         ))}
       </Grid>
     </Grid>
