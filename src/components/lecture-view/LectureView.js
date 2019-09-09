@@ -20,14 +20,31 @@ class LectureView extends React.Component {
   };
 
   async componentDidMount() {
+    var lectures = await this.loadLectures();
+    lectures = this.parseLectures(lectures);
+    this.setState({ lectures });
+  }
+
+  loadLectures = async () => {
     const res = await classtigerAPI.get("/lectures");
     const lectures = res.data.lectures;
+    return lectures;
+  };
+
+  parseLectures = lectures => {
     lectures.map(lecture => {
       lecture.start = moment(lecture.start);
       lecture.end = moment(lecture.end);
     });
+    return lectures;
+  };
+
+  handleAddLecture = lecture => {
+    var lectures = this.state.lectures;
+    lectures.push(lecture);
+    lectures = this.parseLectures(lectures);
     this.setState({ lectures });
-  }
+  };
 
   openDialog = dialog => {
     this.setState({ openDialog: dialog });
@@ -56,6 +73,7 @@ class LectureView extends React.Component {
             <LectureDialog
               open={this.state.openDialog === "lecture"}
               handleClose={this.closeDialog}
+              handleAddLecture={this.handleAddLecture}
             />
             <FilterDialog
               open={this.state.openDialog === "filter"}

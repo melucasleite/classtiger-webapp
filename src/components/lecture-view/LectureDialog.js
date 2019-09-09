@@ -17,6 +17,7 @@ import {
 import { TimePicker, MuiPickersUtilsProvider } from "@material-ui/pickers";
 import MomentUtils from "@date-io/moment";
 import moment from "moment";
+import classtigerAPI from "../../services/api";
 
 class CreateLectureDialog extends React.Component {
   state = {
@@ -25,13 +26,28 @@ class CreateLectureDialog extends React.Component {
     dayOfWeek: 1,
     capacity: 5
   };
-  handleSubmit = () => {
-    console.log(this.state);
-    this.props.handleClose();
-    this.props.enqueueSnackbar("This is a warning message!", {
-      variant: "info",
-      action: this.dismissAction
-    });
+  handleSubmit = async () => {
+    var { start, end, dayOfWeek, capacity } = this.state;
+    try {
+      const res = await classtigerAPI.post("lectures", {
+        start: start,
+        end: end,
+        dayOfWeek: dayOfWeek,
+        capacity: capacity
+      });
+      const lecture = res.data.lecture;
+      this.props.enqueueSnackbar("Lecture added.", {
+        variant: "success",
+        action: this.dismissAction
+      });
+      this.props.handleClose();
+      this.props.handleAddLecture(lecture);
+    } catch (error) {
+      this.props.enqueueSnackbar(error.response.data.message, {
+        variant: "error",
+        action: this.dismissAction
+      });
+    }
   };
   dismissAction = key => (
     <Button
@@ -82,11 +98,16 @@ class CreateLectureDialog extends React.Component {
               <FormControl fullWidth>
                 <TextField
                   id="capacity"
-                  label="capacity"
+                  type="number"
+                  inputProps={{ min: "1", max: "100", step: "1" }}
+                  label="Student Capacity"
                   value={this.state.capacity}
                   onChange={e => {
+                    var capacity = e.target.value.replace(/[^0-9]/g, "");
+                    if (capacity < 1) capacity = 1;
+                    if (capacity > 100) capacity = 100;
                     this.setState({
-                      capacity: e.target.value.replace(/[^0-9]/g, "")
+                      capacity: capacity
                     });
                   }}
                   margin="normal"
