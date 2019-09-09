@@ -12,7 +12,8 @@ import { withSnackbar } from "notistack";
 import Container from "@material-ui/core/Container";
 import { Link as RouterLink } from "react-router-dom";
 import PropTypes from "prop-types";
-import classtigerAPI from "../api/classtiger";
+import classtigerAPI from "../services/api";
+import { login } from "../services/auth";
 
 const AdapterLink = React.forwardRef((props, ref) => (
   <RouterLink innerRef={ref} {...props} />
@@ -51,11 +52,33 @@ class SignIn extends React.Component {
 
   loginSubmit = async event => {
     event.preventDefault();
+    await this.setState({ email: this.state.email.trim() });
+    await this.setState({ password: this.state.password.trim() });
+    var { name, email, password } = this.state;
+    this.setState({
+      emailError: false,
+      passwordError: false
+    });
+    if (email.length < 5 || email.length > 180) {
+      this.setState({
+        emailError: "Email must be between 5 and 180 characters."
+      });
+    }
+    if (password.length < 8 || password.length > 180) {
+      this.setState({
+        passwordError: "Password must be between 8 and 180 characters."
+      });
+    }
+    if (this.state.passwordError || this.state.emailError) {
+      return;
+    }
     try {
       const res = await classtigerAPI.post("auth/login", {
         email: this.state.email,
         password: this.state.password
       });
+      login(res.data.token);
+      this.props.history.push("/");
     } catch (error) {
       this.props.enqueueSnackbar(error.response.data.message, {
         variant: "error",
@@ -90,6 +113,8 @@ class SignIn extends React.Component {
               label="Email Address"
               name="email"
               autoComplete="email"
+              helperText={this.state.emailError}
+              error={this.state.emailError}
               autoFocus
             />
             <TextField
@@ -104,6 +129,8 @@ class SignIn extends React.Component {
               name="password"
               label="Password"
               type="password"
+              helperText={this.state.passwordError}
+              error={this.state.passwordError}
               id="password"
               autoComplete="current-password"
             />
