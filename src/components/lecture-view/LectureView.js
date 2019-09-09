@@ -8,9 +8,9 @@ import LectureDialog from "./LectureDialog";
 import FilterDialog from "./FilterDialog";
 import sampleLectures from "./sampleLectures";
 import AppBar from "@material-ui/core/AppBar";
-import PrimarySearchAppBar from "./PrimarySearchAppBar";
 import classtigerAPI from "../../services/api";
 import moment from "moment";
+import Dashboard from "../dashboard/Dashboard";
 
 class LectureView extends React.Component {
   state = {
@@ -64,26 +64,21 @@ class LectureView extends React.Component {
 
   render() {
     return (
-      <div>
-        <PrimarySearchAppBar></PrimarySearchAppBar>
-        <Container>
-          <Box mt={15}>
-            <LectureCalendar lectures={this.state.lectures} />
-            <LectureActions handleOpenDialog={this.openDialog} />
-            <LectureDialog
-              open={this.state.openDialog === "lecture"}
-              handleClose={this.closeDialog}
-              handleAddLecture={this.handleAddLecture}
-            />
-            <FilterDialog
-              open={this.state.openDialog === "filter"}
-              handleClose={this.closeDialog}
-              filters={this.state.filters}
-              handleChange={this.handleChange}
-            />
-          </Box>
-        </Container>
-      </div>
+      <Dashboard>
+        <LectureCalendar lectures={this.state.lectures} />
+        <LectureActions handleOpenDialog={this.openDialog} />
+        <LectureDialog
+          open={this.state.openDialog === "lecture"}
+          handleClose={this.closeDialog}
+          handleAddLecture={this.handleAddLecture}
+        />
+        <FilterDialog
+          open={this.state.openDialog === "filter"}
+          handleClose={this.closeDialog}
+          filters={this.state.filters}
+          handleChange={this.handleChange}
+        />
+      </Dashboard>
     );
   }
 }
