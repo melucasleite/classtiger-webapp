@@ -23,7 +23,7 @@ class CreateLectureDialog extends React.Component {
     start: new moment("14:00", "HH:mm").format(),
     end: new moment("16:00", "HH:mm").format(),
     dayOfWeek: 1,
-    students: 5
+    capacity: 5
   };
   handleSubmit = () => {
     console.log(this.state);
@@ -81,12 +81,12 @@ class CreateLectureDialog extends React.Component {
             <Box mb={1}>
               <FormControl fullWidth>
                 <TextField
-                  id="students"
-                  label="Students"
-                  value={this.state.students}
+                  id="capacity"
+                  label="capacity"
+                  value={this.state.capacity}
                   onChange={e => {
                     this.setState({
-                      students: e.target.value.replace(/[^0-9]/g, "")
+                      capacity: e.target.value.replace(/[^0-9]/g, "")
                     });
                   }}
                   margin="normal"
